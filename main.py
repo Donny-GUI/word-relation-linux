@@ -2,6 +2,8 @@ import re
 from sys import argv
 import os
 from pprint import pprint
+from rich.console import Console
+from rich.status import Status
 
 green = "\033[32m"
 red = "\033[31m"
@@ -28,17 +30,25 @@ def get_files1():
     pwd3 = os.getcwd()
     pstring3 = f"{pwd3}/{comp1}"
     pstring4 = f"{pwd3}/{comp2}"
-    with open(pstring3, 'r') as first_topic:
-        first = [str(x).strip("\n") for x in first_topic.readlines()]
-    return first
-    
+    try:       
+        with open(pstring3, 'r') as first_topic:
+            first = [str(x).strip("\n") for x in first_topic.readlines()]
+        return first
+    except FileNotFoundError: 
+        print(f"[{green}Topic Not Specific{endc}] Wikipedia API could not find a definite match for {comp1}")
+        exit()
+        
 def get_files2():
     pwd4 = os.getcwd()
     pstring4 = f"{pwd4}/{comp2}"
-    with open(pstring4, 'r') as second_topic:
-        second = [str(x).strip("\n") for x in second_topic.readlines()]
-    return second
-        
+    try:       
+        with open(pstring4, 'r') as second_topic:
+            second = [str(x).strip("\n") for x in second_topic.readlines()]
+        return second
+    except FileNotFoundError: 
+        print(f"[{comp2}Topic Not Specific{endc}] Wikipedia API could not find a definite match for {comp2}")
+        exit()
+
 def compare(list1, list2):
     
     words = []
@@ -68,14 +78,27 @@ def compare(list1, list2):
 
     words_in_first_not_in_second = total_out_in_first
 
-    first_inwords = total_in_first/total_first
-    first_outwords = total_out_in_first/total_first
-
+    try:
+        first_inwords = total_in_first/total_first
+    except ZeroDivisionError:
+        print(f"[{green}{comp1}{endc}] Wikipedia API could not pin down what you meant by this")
+        exit()
+        
+    try:
+        first_outwords = total_out_in_first/total_first
+    except ZeroDivisionError:
+        print(f"[{green}{comp2}{endc}] Wikipedia API could not pin down what you meant by this")
+        exit()
+        
     total_second = len(list2)
     total_in_second = len(words2)
     total_out_in_second = len(notwords2)
 
-    second_inwords = total_in_second/total_second
+    try:
+        second_inwords = total_in_second/total_second
+    except ZeroDivisionError:
+        print(f"[{green}{comp2}{endc}] Wikipedia API could not pin down what you meant by this")
+        exit()
     second_outwords = total_out_in_second/len(list2)
 
 
@@ -163,9 +186,23 @@ def filecheck():
     
 
 if __name__ == '__main__':
-    comp1 = argv[1]
-    comp2 = argv[2]
-    filecheck()
-    first = get_files1()
-    second = get_files2()
-    first_count = compare(first, second)
+    try:
+        
+        with Status("Getting Wikipages...", spinner='clock'):
+            comp1 = argv[1]
+            comp2 = argv[2]
+            filecheck()
+            first = get_files1()
+            second = get_files2()
+    except IndexError:
+        print("Please Provide Two Topics")
+                
+            
+   
+    try:
+        with Status("Calculating...", spinner='dots5'):
+            first_count = compare(first, second)
+    except ZeroDivisionError:
+        print(f"{red}Could not find one of the topics{endc}")
+        exit()
+            
