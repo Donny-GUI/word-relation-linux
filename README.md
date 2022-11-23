@@ -1,5 +1,5 @@
 # word-relation-linux
-Relate to topics to one another
+Relate two topics to one another
 
 # Installation
 
