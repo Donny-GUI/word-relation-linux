@@ -198,11 +198,16 @@ if __name__ == '__main__':
         print("Please Provide Two Topics")
                 
             
-   
+    name_error = False
     try:
         with Status("Calculating...", spinner='dots5'):
+            
             first_count = compare(first, second)
     except ZeroDivisionError:
         print(f"{red}Could not find one of the topics{endc}")
         exit()
-            
+    except NameError:
+        if not name_error:
+            print(f"{red}Please Provide Two Topics{endc}")
+            name_error = True 
+        exit()   
