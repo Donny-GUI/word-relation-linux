@@ -11,6 +11,14 @@ cd word-relation-linux
 python3 main.py "Super Mario Bros" "Super Mario 64"
 
 ```
+## How it works
+
+1. Use the wikipedia api to get two topics
+2. filter out 1000 of the most common words in english out of both list
+3. compare the two lists against each other
+4. get the percentage of words in one that is in the second and visa versa
+5. check to see if words in one title are in another title and visa versa
+6. use a scale to judge to relation
 
 
 ## EXAMPLES
